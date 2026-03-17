@@ -13,7 +13,7 @@ AETHER is a proactive cybersecurity ecosystem deployed on **Oracle Cloud (OCI)**
 - **AI Analytics:** Semantic log analysis using **OpenRouter (LLMs)** for threat attribution.
 
 ## 🏗️ Architecture
-(Inserta aquí la imagen que exportaste de Excalidraw)
+![Arquitectura AETHER](./assets/esquema.png)
 
 ## 🛠️ Stack
 - **Infrastructure:** Oracle Cloud (Ubuntu Instance).
