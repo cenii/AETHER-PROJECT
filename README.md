@@ -18,7 +18,7 @@ AETHER es un ecosistema de ciberseguridad proactiva desplegado en **Oracle Cloud
 ## 🛠️ Stack Tecnológico
 - **Infraestructura:** Oracle Cloud (Instancia Ubuntu).
 - **Orquestación:** Portainer y Docker.
-- **Inteligencia:** n8n + Modelos de IA (GPT-4o/Claude).
+- **Inteligencia:** n8n + Modelos de IA (Trinity Large Preview).
 
 ## 🚀 Instrucciones de Despliegue (Deployment Guide)
 
@@ -50,8 +50,8 @@ sudo systemctl enable --now docker
 ### 3. Configuración del Proyecto
 Clonar el repositorio:
 ```bash
-git clone https://github.com/tu-usuario/aether-project.git
-cd aether-project
+git clone https://github.com/cenii/AETHER-PROJECT.git
+cd AETHER-PROJECT
 ```
 
 Rellena los campos obligatorios:
