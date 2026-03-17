@@ -18,4 +18,4 @@ AETHER is a proactive cybersecurity ecosystem deployed on **Oracle Cloud (OCI)**
 ## 🛠️ Stack
 - **Infrastructure:** Oracle Cloud (Ubuntu Instance).
 - **Orchestration:** Portainer & Docker.
-- **Intelligence:** n8n + AI Models (GPT-4o/Claude).
+- **Intelligence:** n8n + AI Models (Trinity Large Preview).
