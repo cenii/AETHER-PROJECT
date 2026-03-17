@@ -1,0 +1,73 @@
+services:
+  # --- HONEYPOT ---
+  aether-honeypot:
+    image: cowrie/cowrie:latest
+    container_name: aether-honeypot
+    restart: always
+    ports:
+      - "22:2222" # El cebo: Puerto 22 del host al 2222 del contenedor
+    networks:
+      - aether-net
+
+  # --- WAZUH STACK ---
+  wazuh-indexer:
+    image: wazuh/wazuh-indexer:4.14.3
+    container_name: wazuh-indexer
+    environment:
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - aether-net
+
+  wazuh-manager:
+    image: wazuh/wazuh-manager:4.14.3
+    container_name: wazuh-manager
+    restart: always
+    ports:
+      - "1514:1514"
+      - "1515:1515"
+      - "514:514/udp"
+      - "55000:55000"
+    volumes:
+      - ./wazuh/local_rules.xml:/var/ossec/etc/rules/local_rules.xml
+    networks:
+      - aether-net
+
+  wazuh-dashboard:
+    image: wazuh/wazuh-dashboard:4.14.3
+    container_name: wazuh-dashboard
+    restart: always
+    ports:
+      - "443:5601"
+    networks:
+      - aether-net
+
+  # --- n8n ---
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=tu-dominio.com # Configurar para el túnel
+      - N8N_PROTOCOL=https
+      - NODE_FUNCTION_ALLOW_EXTERNAL=axios,moment
+    networks:
+      - aether-net
+
+  # --- CLOUDFLARE ---
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: always
+    command: tunnel run --token ${CF_TUNNEL_TOKEN}
+    networks:
+      - aether-net
+
+networks:
+  aether-net:
+    driver: bridge

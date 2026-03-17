@@ -1,0 +1,27 @@
+<group name="cowrie,aether,">
+
+  <rule id="100001" level="3">
+    <decoded_as>cowrie</decoded_as>
+    <description>AETHER: Evento detectado en Honeypot Cowrie.</description>
+    <group>honeypot_event,pci_dss_10.2.4,pci_dss_10.2.5,</group>
+  </rule>
+
+  <rule id="100002" level="10">
+    <if_sid>100001</if_sid>
+    <field name="eventid">^cowrie.login.success$</field>
+    <description>AETHER ALERT: Intrusión exitosa en Honeypot. Activando baneo de IP $(src_ip).</description>
+    <mitre>
+      <id>T1110</id> </mitre>
+    <group>active_response,attack,authentication_success,</group>
+  </rule>
+
+  <rule id="100003" level="12">
+    <if_sid>100001</if_sid>
+    <field name="eventid">^cowrie.command.input$</field>
+    <description>AETHER CRITICAL: Comando ejecutado por atacante: $(input). Enviando a análisis de IA.</description>
+    <mitre>
+      <id>T1059</id> </mitre>
+    <group>command_execution,ia_analysis,</group>
+  </rule>
+
+</group>

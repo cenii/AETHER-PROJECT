@@ -1,0 +1,112 @@
+{
+  "name": "AETHER SOC - AI Response Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aether-alert",
+        "options": {}
+      },
+      "name": "Webhook-Wazuh",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "TU_TELEGRAM_CHAT_ID",
+        "text": "=🚨 *ALERTA AETHER SOC* 🚨\n---\n🌐 *Origen:* {{ $('Webhook-Wazuh').item.json.body.data.src_ip }}\n🔑 *Login:* {{ $('Webhook-Wazuh').item.json.body.data.username }}\n💻 *Comando:* {{ $('Webhook-Wazuh').item.json.body.data.password }}\n\n🤖 *ANÁLISIS IA:* {{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "name": "Telegram-Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -288
+      ],
+      "credentials": {
+        "telegramApi": {
+          "name": "Colocar Nombre de Credencial"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body }}",
+        "options": {
+          "systemMessage": "Actúa como AETHER-AI, un experto en ciberseguridad ofensiva y analista senior de SOC. \n\nHe capturado la siguiente actividad en mi Honeypot:\n- 🌐 IP de Origen: {{ $json.body.data.src_ip }}\n- 🔑 Credenciales intentadas: Usuario [{{ $json.body.data.username }}] / Password [{{ $json.body.data.password }}]\n- 💻 Comando ejecutado: {{ $json.body.data.command || \"N/A (Solo Intento de Login)\" }}\n- 🛡️ Evento: {{ $json.body.rule.description }}\n\nTu tarea:\n1. Identifica si el ataque parece un botnet conocido.\n2. Explica brevemente qué buscaba el atacante.\n3. Clasifica el Nivel de Riesgo de 1 a 10.\n4. Da una recomendación rápida.\n\nResponde de forma muy concisa y usa iconos."
+        }
+      },
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        384,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "model": "arcee-ai/trinity-large-preview:free",
+        "options": {}
+      },
+      "name": "OpenRouter Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -80
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "name": "Colocar Nombre de Credencial"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook-Wazuh": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram-Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
